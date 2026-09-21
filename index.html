@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Katalog Atomy — Manfaat, Cara Pakai & Dosis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="#">
+        <div class="logo">AT</div>
+        <div>
+          <b>ATOMY</b>
+          <small>Katalog edukatif</small>
+        </div>
+      </a>
+      <label class="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5d6d7e" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+        <input id="q" type="search" placeholder="Cari produk, manfaat, atau keluhan…" />
+      </label>
+      <a class="nav-cta" href="Katalog_Produk_Atomy.docx">Unduh dokumen</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <div class="kicker">Katalog visual</div>
+        <h1>Manfaat, cara pakai, <em>dan dosis</em> dalam satu tempat.</h1>
+        <p class="lead">Rangkaian suplemen, skincare, makeup, dan perawatan rambut Atomy dari brosur produk — dilengkapi ringkasan edukatif agar mudah dipilih.</p>
+        <div class="stats">
+          <div class="stat"><b id="count">0</b><span>produk ditampilkan</span></div>
+          <div class="stat"><b>11</b><span>halaman brosur sumber</span></div>
+          <div class="stat"><b>ID</b><span>bahasa Indonesia</span></div>
+        </div>
+      </div>
+      <div class="hero-art">
+        <img src="images/p00.jpg" alt="Vitamin D3K2" />
+        <img src="images/p17.jpg" alt="HemoHIM" />
+        <img src="images/p03.jpg" alt="Noni" />
+        <img src="images/p56.jpg" alt="Ampoule" />
+      </div>
+    </section>
+
+    <nav class="filters" id="filters" aria-label="Kategori"></nav>
+    <section class="grid" id="grid"></section>
+  </main>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="sheet">
+      <div class="sheet-img"><img id="mimg" alt="" /></div>
+      <div class="sheet-body">
+        <button class="close" id="close" aria-label="Tutup">×</button>
+        <div class="tag" id="mtag"></div>
+        <h2 id="mname"></h2>
+        <div class="block">
+          <h4>Manfaat</h4>
+          <p id="mmanfaat"></p>
+        </div>
+        <div class="block">
+          <h4>Penggunaan & dosis</h4>
+          <p id="mdosis"></p>
+        </div>
+        <div class="block">
+          <h4>Catatan</h4>
+          <p>Suplemen bukan obat. Utamakan petunjuk pada kemasan/BPOM. Konsultasi dokter jika hamil, menyusui, anak, atau sedang terapi.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="wrap foot">
+      <p>Katalog edukatif berdasarkan foto brosur Atomy dan informasi produsen. Bukan situs resmi Atomy Co., Ltd. dan bukan nasihat medis.</p>
+      <p>Sumber foto: brosur produk yang Anda unggah.</p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
