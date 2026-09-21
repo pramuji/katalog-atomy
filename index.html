@@ -70,6 +70,9 @@
         <input id="q" type="search" placeholder="Cari HemoHIM, vitamin C, noni, ginseng…" />
       </label>
       <a class="nav-wa" data-wa target="_blank" rel="noopener">Chat WhatsApp</a>
+      <button class="cart-btn" id="openCart" type="button" aria-label="Keranjang">
+        Keranjang <span class="badge" id="cartCount">0</span>
+      </button>
     </div>
   </header>
 
@@ -137,6 +140,7 @@
           <p>Suplemen bukan obat. Utamakan petunjuk pada kemasan/BPOM. Konsultasi dokter jika hamil, menyusui, anak, atau sedang terapi.</p>
         </div>
         <a class="wa-cta" id="mwa" target="_blank" rel="noopener">Tanya produk ini di WhatsApp</a>
+        <button class="add-cta" id="madd" type="button">Tambah ke keranjang</button>
       </div>
     </div>
   </div>
@@ -153,7 +157,37 @@
     </div>
   </footer>
 
+  <aside class="cart-panel" id="cartPanel" hidden>
+    <div class="cart-sheet">
+      <div class="cart-head">
+        <h2>Pesan & cek ongkir</h2>
+        <button class="close" id="closeCart" type="button" aria-label="Tutup">×</button>
+      </div>
+      <div id="cartItems" class="cart-items"></div>
+      <form id="orderForm" class="order-form">
+        <label>Nama<input name="nama" required placeholder="Nama lengkap" /></label>
+        <label>No. HP / WhatsApp<input name="hp" required placeholder="08…" /></label>
+        <label>Kota tujuan
+          <select name="kota" id="kota" required>
+            <option value="">Pilih kota</option>
+          </select>
+        </label>
+        <label>Alamat lengkap<textarea name="alamat" required rows="2" placeholder="Jalan, RT/RW, kelurahan"></textarea></label>
+        <label>Kurir
+          <select name="kurir" id="kurir">
+            <option value="jne">JNE REG</option>
+            <option value="jnt">J&T REG</option>
+            <option value="sicepat">SiCepat REG</option>
+          </select>
+        </label>
+        <p class="ongkir" id="ongkirBox">Pilih kota untuk melihat estimasi ongkir.</p>
+        <button class="wa-cta order-submit" type="submit">Kirim pesanan via WhatsApp</button>
+      </form>
+    </div>
+  </aside>
+
   <script src="js/data.js"></script>
+  <script src="js/cities.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

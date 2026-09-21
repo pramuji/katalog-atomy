@@ -65,6 +65,29 @@ header {
   font-size: 14px;
   text-decoration: none;
 }
+.cart-btn {
+  flex: none;
+  background: var(--navy);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+.badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  margin-left: 4px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 11px;
+}
 
 .hero {
   padding: 48px 0 18px;
@@ -112,6 +135,24 @@ h1 em { font-style: italic; color: #8a6d2d; }
 .body h3 { font-size: 16px; color: var(--navy); line-height: 1.3; }
 .excerpt { color: var(--muted); font-size: 13.5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .more { margin-top: auto; color: var(--gold); font-weight: 700; font-size: 13px; }
+.card-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.add-mini {
+  border: 0;
+  background: var(--navy);
+  color: #fff;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
 
 .empty { text-align: center; padding: 50px 0; color: var(--muted); }
 
@@ -145,7 +186,65 @@ h1 em { font-style: italic; color: #8a6d2d; }
   text-decoration: none;
   border-radius: 999px;
   padding: 12px 18px;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
 }
+.add-cta {
+  display: inline-flex;
+  margin: 10px 12px 0 0;
+  background: var(--navy);
+  color: #fff;
+  font-weight: 800;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font: inherit;
+}
+.cart-panel {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 28, 43, .55);
+  z-index: 95;
+  display: flex;
+  justify-content: flex-end;
+}
+.cart-panel[hidden] { display: none; }
+.cart-sheet {
+  width: min(420px, 100%);
+  height: 100%;
+  background: #fff;
+  overflow: auto;
+  padding: 22px;
+}
+.cart-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.cart-head h2 { font-family: "Cormorant Garamond", serif; color: var(--navy); font-size: 28px; }
+.cart-items { margin: 16px 0; display: grid; gap: 10px; }
+.cart-row { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; }
+.cart-row img { width: 56px; height: 56px; object-fit: contain; background: #f6f1e6; border-radius: 10px; }
+.cart-row b { color: var(--navy); font-size: 14px; }
+.qty { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.qty button {
+  width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--line);
+  background: #fff; cursor: pointer; font-size: 16px;
+}
+.order-form { display: grid; gap: 10px; }
+.order-form label { display: grid; gap: 4px; font-size: 13px; font-weight: 700; color: var(--navy); }
+.order-form input, .order-form select, .order-form textarea {
+  border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
+  font: inherit; font-weight: 400;
+}
+.ongkir {
+  background: #f6f1e6;
+  border-radius: 14px;
+  padding: 12px;
+  color: var(--navy);
+  font-size: 14px;
+}
+.ongkir small { color: var(--muted); font-weight: 400; }
+.order-submit { width: 100%; justify-content: center; margin-top: 4px; }
+
 .wa-float {
   position: fixed;
   right: 18px;
@@ -175,6 +274,7 @@ footer {
   .nav-wa { display: none; }
   .wa-float span { display: none; }
   .wa-float { padding: 14px; }
+  .cart-btn { padding: 9px 10px; font-size: 12px; }
 }
 .seo {
   margin: 12px 0 72px;
