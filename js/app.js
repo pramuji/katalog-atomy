@@ -1,4 +1,5 @@
 (function () {
+  const WA_NUMBER = "6281282594453";
   const grid = document.getElementById("grid");
   const filters = document.getElementById("filters");
   const q = document.getElementById("q");
@@ -6,6 +7,15 @@
   const countEl = document.getElementById("count");
   let cat = "all";
   let query = "";
+
+  function waUrl(text) {
+    return "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(text);
+  }
+
+  const defaultWa = "Halo, saya lihat katalog Atomy di katalogatomy.online. Saya ingin bertanya tentang produk.";
+  document.querySelectorAll("[data-wa]").forEach((el) => {
+    el.href = waUrl(defaultWa);
+  });
 
   window.CATS.forEach((c) => {
     const b = document.createElement("button");
@@ -64,6 +74,8 @@
     document.getElementById("mname").textContent = p.name;
     document.getElementById("mmanfaat").textContent = p.manfaat;
     document.getElementById("mdosis").textContent = p.dosis;
+    const msg = "Halo, saya tertarik dengan produk Atomy " + p.name + " dari katalogatomy.online. Boleh info stok, harga, dan cara pemesanan?";
+    document.getElementById("mwa").href = waUrl(msg);
     modal.classList.add("open");
   }
 
