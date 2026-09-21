@@ -243,6 +243,19 @@ h1 em { font-style: italic; color: #8a6d2d; }
   font-size: 14px;
 }
 .ongkir small { color: var(--muted); font-weight: 400; }
+.dest-list { display: grid; gap: 4px; max-height: 180px; overflow: auto; }
+.dest-item {
+  text-align: left;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--navy);
+}
+.dest-item:hover { background: #f6f1e6; }
 .order-submit { width: 100%; justify-content: center; margin-top: 4px; }
 
 .wa-float {

@@ -167,11 +167,11 @@
       <form id="orderForm" class="order-form">
         <label>Nama<input name="nama" required placeholder="Nama lengkap" /></label>
         <label>No. HP / WhatsApp<input name="hp" required placeholder="08…" /></label>
-        <label>Kota tujuan
-          <select name="kota" id="kota" required>
-            <option value="">Pilih kota</option>
-          </select>
+        <label>Kota / kelurahan tujuan
+          <input id="destQ" name="kota" required placeholder="Ketik: Wonokromo Surabaya" autocomplete="off" />
+          <input type="hidden" id="destId" />
         </label>
+        <div id="destList" class="dest-list"></div>
         <label>Alamat lengkap<textarea name="alamat" required rows="2" placeholder="Jalan, RT/RW, kelurahan"></textarea></label>
         <label>Kurir
           <select name="kurir" id="kurir">
@@ -188,6 +188,7 @@
 
   <script src="js/data.js"></script>
   <script src="js/cities.js"></script>
+  <script src="js/rajaongkir.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

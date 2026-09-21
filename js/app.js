@@ -7,10 +7,14 @@
   const modal = document.getElementById("modal");
   const countEl = document.getElementById("count");
   const cartPanel = document.getElementById("cartPanel");
-  const kotaSel = document.getElementById("kota");
+  const destQ = document.getElementById("destQ");
+  const destId = document.getElementById("destId");
+  const destList = document.getElementById("destList");
   let cat = "all";
   let query = "";
   let currentId = null;
+  let destTimer = null;
+  let liveOngkir = null;
   let cart = JSON.parse(localStorage.getItem("atomyCart") || "{}");
 
   function waUrl(text) {
@@ -19,6 +23,7 @@
   function saveCart() {
     localStorage.setItem("atomyCart", JSON.stringify(cart));
     renderCart();
+    refreshOngkir();
   }
   function cartQty() {
     return Object.values(cart).reduce((a, b) => a + b, 0);
@@ -26,27 +31,24 @@
   function rupiah(n) {
     return "Rp " + Math.round(n).toLocaleString("id-ID");
   }
-  function cityByName(name) {
-    return (window.CITIES || []).find((c) => c.n === name);
+  function weightGram() {
+    return Math.max(1000, cartQty() * GRAM);
   }
-  function ongkirInfo() {
-    const city = cityByName(kotaSel.value);
+  function fallbackOngkir() {
+    const text = (destQ.value || "").toLowerCase();
+    const city = (window.CITIES || []).find((c) => text.indexOf(c.n.toLowerCase()) !== -1);
     if (!city) return null;
     const zone = window.ONGKIR[city.z];
-    const kg = Math.max(1, Math.ceil((cartQty() * GRAM) / 1000));
-    return { city, zone, kg, cost: zone.kg * kg };
+    const kg = Math.max(1, Math.ceil(weightGram() / 1000));
+    return { cost: zone.kg * kg, kg: kg, etd: zone.etd, service: "Estimasi", name: zone.label };
+  }
+  function currentOngkir() {
+    return liveOngkir || fallbackOngkir();
   }
 
   const defaultWa = "Halo, saya lihat katalog Atomy di katalogatomy.online. Saya ingin bertanya tentang produk.";
   document.querySelectorAll("[data-wa]").forEach((el) => {
     el.href = waUrl(defaultWa);
-  });
-
-  (window.CITIES || []).forEach((c) => {
-    const o = document.createElement("option");
-    o.value = c.n;
-    o.textContent = c.n;
-    kotaSel.appendChild(o);
   });
 
   window.CATS.forEach((c) => {
@@ -161,26 +163,91 @@
         };
       });
     }
-    const info = ongkirInfo();
+    paintOngkir();
+  }
+
+  function paintOngkir() {
     const ongkirBox = document.getElementById("ongkirBox");
+    const info = currentOngkir();
     if (!cartQty()) {
       ongkirBox.textContent = "Tambah produk untuk menghitung ongkir.";
-    } else if (!info) {
-      ongkirBox.textContent = "Pilih kota tujuan untuk estimasi ongkir.";
-    } else {
-      ongkirBox.innerHTML = "<strong>" + rupiah(info.cost) + "</strong> · " + info.zone.label +
-        " · ±" + info.kg + " kg · " + info.zone.etd +
-        "<br><small>Estimasi kurir REG dari Jakarta Selatan. Total harga produk dikonfirmasi penjual.</small>";
+      return;
     }
+    if (!destQ.value) {
+      ongkirBox.textContent = "Ketik kelurahan tujuan, contoh: Wonokromo Surabaya.";
+      return;
+    }
+    if (!info) {
+      ongkirBox.textContent = "Pilih salah satu hasil pencarian alamat di bawah kotak.";
+      return;
+    }
+    const src = liveOngkir ? "RajaOngkir" : "estimasi";
+    ongkirBox.innerHTML = "<strong>" + rupiah(info.cost) + "</strong> · " + (info.name || "") +
+      " " + (info.service || "") + " · ±" + info.kg + " kg · " + info.etd +
+      "<br><small>" + src + " dari " + window.RO.originLabel + ". Harga produk dikonfirmasi penjual.</small>";
   }
+
+  async function refreshOngkir() {
+    liveOngkir = null;
+    paintOngkir();
+    if (!cartQty() || !destId.value) return;
+    const courier = document.getElementById("kurir").value;
+    const kg = Math.max(1, Math.ceil(weightGram() / 1000));
+    try {
+      const list = await window.RO.cost(destId.value, weightGram(), courier);
+      const pick = window.RO.pick(list);
+      if (pick) {
+        liveOngkir = {
+          cost: pick.cost,
+          kg: kg,
+          etd: pick.etd || "-",
+          service: pick.service,
+          name: pick.name
+        };
+      }
+    } catch (err) {
+      liveOngkir = null;
+    }
+    paintOngkir();
+  }
+
+  destQ.addEventListener("input", () => {
+    destId.value = "";
+    liveOngkir = null;
+    clearTimeout(destTimer);
+    const term = destQ.value.trim();
+    if (term.length < 3) {
+      destList.innerHTML = "";
+      paintOngkir();
+      return;
+    }
+    destTimer = setTimeout(async () => {
+      try {
+        const rows = await window.RO.search(term);
+        destList.innerHTML = rows.map((row) =>
+          '<button type="button" class="dest-item" data-id="' + row.id + '">' + row.label + "</button>"
+        ).join("") || '<p class="empty">Tidak ketemu. Coba nama kelurahan.</p>';
+        destList.querySelectorAll(".dest-item").forEach((btn) => {
+          btn.onclick = () => {
+            destId.value = btn.dataset.id;
+            destQ.value = btn.textContent;
+            destList.innerHTML = "";
+            refreshOngkir();
+          };
+        });
+      } catch (err) {
+        destList.innerHTML = "";
+        paintOngkir();
+      }
+    }, 350);
+  });
 
   document.getElementById("openCart").onclick = () => { cartPanel.hidden = false; };
   document.getElementById("closeCart").onclick = () => { cartPanel.hidden = true; };
   cartPanel.addEventListener("click", (e) => {
     if (e.target === cartPanel) cartPanel.hidden = true;
   });
-  kotaSel.addEventListener("change", renderCart);
-  document.getElementById("kurir").addEventListener("change", renderCart);
+  document.getElementById("kurir").addEventListener("change", refreshOngkir);
 
   document.getElementById("madd").onclick = () => {
     if (currentId == null) return;
@@ -193,7 +260,7 @@
     e.preventDefault();
     if (!cartQty()) return;
     const fd = new FormData(e.target);
-    const info = ongkirInfo();
+    const info = currentOngkir();
     const lines = Object.keys(cart).map((id) => {
       const p = window.PRODUCTS.find((x) => x.id === +id);
       return "- " + p.name + " x " + cart[id];
@@ -206,10 +273,10 @@
       "",
       "Nama: " + fd.get("nama"),
       "HP: " + fd.get("hp"),
-      "Kota: " + fd.get("kota"),
+      "Tujuan: " + fd.get("kota"),
       "Alamat: " + fd.get("alamat"),
-      "Kurir: " + kurir,
-      info ? ("Estimasi ongkir: " + rupiah(info.cost) + " (" + info.kg + " kg, " + info.zone.etd + ")") : "",
+      "Kurir: " + kurir + (info && info.service ? " " + info.service : ""),
+      info ? ("Ongkir: " + rupiah(info.cost) + " (" + info.kg + " kg, " + info.etd + ")") : "",
       "",
       "Mohon konfirmasi stok, total harga, dan cara bayar."
     ].filter(Boolean).join("\n");
