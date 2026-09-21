@@ -181,6 +181,12 @@
           </select>
         </label>
         <p class="ongkir" id="ongkirBox">Pilih kota untuk melihat estimasi ongkir.</p>
+        <label>Harga produk (Rp)
+          <input name="harga" id="hargaProduk" type="number" min="0" step="1000" placeholder="Isi sesuai harga dari penjual" />
+        </label>
+        <p class="ongkir" id="totalBox">Total = harga produk + ongkir. Minimum bayar QRIS Rp 10.000.</p>
+        <button class="pay-cta" id="payBtn" type="button">Bayar dengan QRIS</button>
+        <div id="payBox" class="pay-box" hidden></div>
         <button class="wa-cta order-submit" type="submit">Kirim pesanan via WhatsApp</button>
       </form>
     </div>
@@ -189,6 +195,7 @@
   <script src="js/data.js"></script>
   <script src="js/cities.js"></script>
   <script src="js/rajaongkir.js"></script>
+  <script src="js/pay.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

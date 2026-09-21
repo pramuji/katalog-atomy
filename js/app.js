@@ -15,6 +15,8 @@
   let currentId = null;
   let destTimer = null;
   let liveOngkir = null;
+  let payTimer = null;
+  let lastPayment = null;
   let cart = JSON.parse(localStorage.getItem("atomyCart") || "{}");
 
   function waUrl(text) {
@@ -164,6 +166,21 @@
       });
     }
     paintOngkir();
+    paintTotal();
+  }
+
+  function productAmount() {
+    return Math.max(0, Number(document.getElementById("hargaProduk").value || 0));
+  }
+  function grandTotal() {
+    const info = currentOngkir();
+    return productAmount() + (info ? info.cost : 0);
+  }
+  function paintTotal() {
+    const el = document.getElementById("totalBox");
+    if (!el) return;
+    el.innerHTML = "Total bayar: <strong>" + rupiah(grandTotal()) + "</strong> (produk " +
+      rupiah(productAmount()) + " + ongkir " + rupiah((currentOngkir() || {}).cost || 0) + ").";
   }
 
   function paintOngkir() {
@@ -185,6 +202,7 @@
     ongkirBox.innerHTML = "<strong>" + rupiah(info.cost) + "</strong> · " + (info.name || "") +
       " " + (info.service || "") + " · ±" + info.kg + " kg · " + info.etd +
       "<br><small>" + src + " dari " + window.RO.originLabel + ". Harga produk dikonfirmasi penjual.</small>";
+    paintTotal();
   }
 
   async function refreshOngkir() {
@@ -210,6 +228,59 @@
     }
     paintOngkir();
   }
+
+  document.getElementById("hargaProduk").addEventListener("input", paintTotal);
+  document.getElementById("payBtn").onclick = async () => {
+    const form = document.getElementById("orderForm");
+    if (!form.reportValidity()) return;
+    if (!cartQty()) return;
+    const total = grandTotal();
+    const box = document.getElementById("payBox");
+    box.hidden = false;
+    if (total < 10000) {
+      box.textContent = "Minimum QRIS Rp 10.000. Isi harga produk.";
+      return;
+    }
+    const fd = new FormData(form);
+    const items = Object.keys(cart).map((id) => {
+      const p = window.PRODUCTS.find((x) => x.id === +id);
+      return { name: p.name, quantity: cart[id], price: Math.max(1, Math.round(productAmount() / Math.max(1, cartQty()))) };
+    });
+    box.textContent = "Membuat QRIS...";
+    try {
+      const res = await window.PAY.create({
+        orderId: "ATMY-" + Date.now(),
+        amount: total,
+        name: fd.get("nama"),
+        phone: fd.get("hp"),
+        items: items
+      });
+      if (!res.data || !res.data.payment_url) {
+        box.textContent = (res.meta && res.meta.message) || "Gagal membuat QRIS.";
+        return;
+      }
+      lastPayment = res.data;
+      const qr = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(res.data.payment_url);
+      box.innerHTML = "<p><strong>" + rupiah(res.data.amount) + "</strong> · " + res.data.status +
+        "</p><img alt='QRIS' src='" + qr + "' /><p><a href='" + res.data.payment_url +
+        "' target='_blank' rel='noopener'>Buka halaman bayar</a></p><p id='payStatus'>Menunggu pembayaran…</p>";
+      if (payTimer) clearInterval(payTimer);
+      payTimer = setInterval(async () => {
+        try {
+          const st = await window.PAY.status(res.data.payment_id);
+          const data = st.data || {};
+          const el = document.getElementById("payStatus");
+          if (el) el.textContent = "Status: " + (data.status || "-");
+          if (data.status && data.status !== "PENDING") {
+            clearInterval(payTimer);
+            lastPayment = data;
+          }
+        } catch (err) {}
+      }, 8000);
+    } catch (err) {
+      box.textContent = "Browser memblokir API. Izinkan domain di tab Access Komerce, atau kirim lewat WhatsApp.";
+    }
+  };
 
   destQ.addEventListener("input", () => {
     destId.value = "";
@@ -277,6 +348,9 @@
       "Alamat: " + fd.get("alamat"),
       "Kurir: " + kurir + (info && info.service ? " " + info.service : ""),
       info ? ("Ongkir: " + rupiah(info.cost) + " (" + info.kg + " kg, " + info.etd + ")") : "",
+      "Harga produk: " + rupiah(productAmount()),
+      "Total: " + rupiah(grandTotal()),
+      lastPayment ? ("Pembayaran QRIS: " + (lastPayment.status || "PENDING") + " / " + (lastPayment.payment_id || "")) : "",
       "",
       "Mohon konfirmasi stok, total harga, dan cara bayar."
     ].filter(Boolean).join("\n");
