@@ -42,7 +42,7 @@
     }
     grid.innerHTML = list.map((p) => `
       <article class="card" data-id="${p.id}">
-        <div class="thumb"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
+        <div class="thumb"><img src="${p.img}" alt="Atomy ${p.name} — ${p.tag}" loading="lazy"></div>
         <div class="body">
           <div class="tag">${p.tag}</div>
           <h3>${p.name}</h3>

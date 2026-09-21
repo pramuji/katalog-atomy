@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://pramuji.github.io/sitemap.xml
